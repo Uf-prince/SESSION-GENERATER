@@ -4,12 +4,12 @@
   "description": "A multi functional whatsapp bot Web paircode.",
   "main": "./bmb.js",
   "scripts": {
-    "start": "pm2 start bmb.js --deep-monitoring --attach --name SESSION-GENERATER",
-    "stop": "pm2 stop SESSION-GENERATER",
-    "restart": "pm2 restart SESSION-GENERATER"
+    "start": "pm2 start bmb.js --deep-monitoring --attach --name SESSIONSCANNERt",
+    "stop": "pm2 stop SESSIONSCANNERt",
+    "restart": "pm2 restart SESSIONSCANNERt"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "^6.7.21",  
+    "@whiskeysockets/baileys": "github:XdKing2/Malvin-Baileys", 
     "@adiwajshing/keyed-db": "^0.2.4",
     "qrcode": "^1.5.3",
     "awesome-phonenumber": "^2.64.0",
@@ -21,6 +21,6 @@
     "megajs": "1.1.7",
     "pm2": "^5.4.0",
     "async-mutex": "0.4.1",
-    "jimp": "^1.6.0"
+    "jimp": "^0.22.12" // Maine ise bhi update kar diya hai taaki conflict na aaye.
   }
 }
