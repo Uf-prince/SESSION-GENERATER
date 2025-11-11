@@ -4,12 +4,12 @@
   "description": "A multi functional whatsapp bot Web paircode.",
   "main": "./bmb.js",
   "scripts": {
-    "start": "pm2 start bmb.js --deep-monitoring --attach --name SESSIONSCANNERt",
-    "stop": "pm2 stop SESSIONSCANNERt",
-    "restart": "pm2 restart SESSIONSCANNERt"
+    "start": "pm2 start bmb.js --deep-monitoring --attach --name SESSION-GENERATER",
+    "stop": "pm2 stop SESSION-GENERATER",
+    "restart": "pm2 restart SESSION-GENERATER"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "npm:dgxeon-soket@^3.0.0",
+    "@whiskeysockets/baileys": "^6.7.21",  
     "@adiwajshing/keyed-db": "^0.2.4",
     "qrcode": "^1.5.3",
     "awesome-phonenumber": "^2.64.0",
