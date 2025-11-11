@@ -21,6 +21,6 @@
     "megajs": "1.1.7",
     "pm2": "^5.4.0",
     "async-mutex": "0.4.1",
-    "jimp": "^0.22.12" // Maine ise bhi update kar diya hai taaki conflict na aaye.
+    "jimp": "^0.22.12"
   }
 }
