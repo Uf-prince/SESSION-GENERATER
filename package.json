@@ -1,12 +1,17 @@
 {
   "name": "web-pair",
   "version": "0.0.1",
-  "description": "A multi functional whatsapp bot Web paircode.",
+  "description": "A multi-functional WhatsApp bot Web paircode",
   "main": "./bmb.js",
+  "engines": {
+    "node": "22.x",
+    "npm": "10.x"
+  },
   "scripts": {
     "start": "pm2 start bmb.js --deep-monitoring --attach --name SESSIONSCANNERt",
     "stop": "pm2 stop SESSIONSCANNERt",
-    "restart": "pm2 restart SESSIONSCANNERt"
+    "restart": "pm2 restart SESSIONSCANNERt",
+    "heroku-postbuild": "tsc --skipLibCheck"
   },
   "dependencies": {
     "@whiskeysockets/baileys": "github:1122bot/Baileys",
