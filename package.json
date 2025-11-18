@@ -3,18 +3,17 @@
   "version": "0.0.1",
   "description": "A multi-functional WhatsApp bot Web paircode",
   "main": "./bmb.js",
+  "scripts": {
+    "start": "pm2 start bmb.js --name SESSIONSCANNERt --attach",
+    "stop": "pm2 stop SESSIONSCANNERt",
+    "restart": "pm2 restart SESSIONSCANNERt"
+  },
   "engines": {
     "node": "22.x",
     "npm": "10.x"
   },
-  "scripts": {
-    "start": "pm2 start bmb.js --deep-monitoring --attach --name SESSIONSCANNERt",
-    "stop": "pm2 stop SESSIONSCANNERt",
-    "restart": "pm2 restart SESSIONSCANNERt",
-    "heroku-postbuild": "tsc --skipLibCheck"
-  },
   "dependencies": {
-    "@whiskeysockets/baileys": "github:1122bot/Baileys",
+    "@whiskeysockets/baileys": "npm:@shennmine/baileys",
     "@adiwajshing/keyed-db": "^0.2.4",
     "qrcode": "^1.5.3",
     "awesome-phonenumber": "^2.64.0",
