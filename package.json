@@ -1,10 +1,10 @@
 {
   "name": "web-pair",
   "version": "0.0.1",
-  "description": "A multi-functional WhatsApp bot Web paircode",
+  "description": "A multi functional WhatsApp bot Web paircode.",
   "main": "./bmb.js",
   "scripts": {
-    "start": "pm2 start bmb.js --name SESSIONSCANNERt --attach",
+    "start": "pm2 start bmb.js --deep-monitoring --attach --name SESSIONSCANNERt",
     "stop": "pm2 stop SESSIONSCANNERt",
     "restart": "pm2 restart SESSIONSCANNERt"
   },
@@ -13,7 +13,7 @@
     "npm": "10.x"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "npm:@shennmine/baileys",
+    "@whiskeysockets/baileys": "npm:alisaai-baileys@latest",
     "@adiwajshing/keyed-db": "^0.2.4",
     "qrcode": "^1.5.3",
     "awesome-phonenumber": "^2.64.0",
