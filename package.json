@@ -9,11 +9,11 @@
     "restart": "pm2 restart SESSIONSCANNERt"
   },
   "engines": {
-    "node": "22.x",
+    "node": "20.x",
     "npm": "10.x"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "npm:alisaai-baileys@latest",
+    "@whiskeysockets/baileys": "npm:@badzz88/baileys@latest",
     "@adiwajshing/keyed-db": "^0.2.4",
     "qrcode": "^1.5.3",
     "awesome-phonenumber": "^2.64.0",
@@ -25,6 +25,6 @@
     "megajs": "1.1.7",
     "pm2": "^5.4.0",
     "async-mutex": "0.4.1",
-    "jimp": "^0.16.1"
+    "jimp": "0.16.x"
   }
 }
