@@ -13,7 +13,7 @@
     "npm": "10.x"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "npm:@badzz88/baileys@latest",
+    "@whiskeysockets/baileys": "github:Uf-prince/Baileys#master",
     "@adiwajshing/keyed-db": "^0.2.4",
     "qrcode": "^1.5.3",
     "awesome-phonenumber": "^2.64.0",
