@@ -1,29 +1,49 @@
 const express = require('express');
 const app = express();
-__path = process.cwd()
+const path = require('path');
 const bodyParser = require("body-parser");
+
+const __path = process.cwd();
 const PORT = process.env.PORT || 8000;
-let server = require('./qr'),
-    code = require('./pair');
+
+// Max Listeners limit fix
 require('events').EventEmitter.defaultMaxListeners = 500;
-app.use('/server', server);
-app.use('/code', code);
-app.use('/pair',async (req, res, next) => {
-res.sendFile(__path + '/pair.html')
-})
-app.use('/qr',async (req, res, next) => {
-res.sendFile(__path + '/qr.html')
-})
-app.use('/',async (req, res, next) => {
-res.sendFile(__path + '/main.html')
-})
+
+// Middleware setup (Inhein routes se pehle hona chahiye)
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Routes load karein
+// Note: Agar qr.js aur pair.js mein error aaye, toh unhein check karein
+let server = require('./qr');
+let code = require('./pair');
+
+// API Routes
+app.use('/server', server);
+app.use('/code', code);
+
+// Frontend Routes
+app.get('/pair', async (req, res) => {
+    res.sendFile(path.join(__path, 'pair.html'));
+});
+
+app.get('/qr', async (req, res) => {
+    res.sendFile(path.join(__path, 'qr.html'));
+});
+
+app.get('/', async (req, res) => {
+    res.sendFile(path.join(__path, 'main.html'));
+});
+
+// Server Start
 app.listen(PORT, () => {
     console.log(`
-Don't Forget To Give Star Ladybug-MD
+====================================
+  SERVER STARTED SUCCESSFULLY
+  Running on: http://localhost:${PORT}
+  Don't Forget To Give Star BILAL-MD
+====================================
+    `);
+});
 
- Server running on http://localhost:` + PORT)
-})
-
-module.exports = app
+module.exports = app;
