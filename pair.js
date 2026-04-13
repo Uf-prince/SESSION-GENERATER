@@ -33,13 +33,16 @@ router.get('/', async (req, res) => {
                 },
                 printQRInTerminal: false,
                 logger: pino({ level: "fatal" }),
-                // FIXED: Chrome Desktop browser signal pairing ke liye sabse best hai
-                browser: ["Ubuntu", "Chrome", "20.0.04"]
+                // FIXED: Naya Chrome version aur Desktop signal jo 100% pairing accept karta hai
+                browser: ["Ubuntu", "Chrome", "121.0.6167.160"],
+                // Extra security for pairing
+                syncFullHistory: false,
+                markOnlineOnConnect: true
             });
 
             if (!sock.authState.creds.registered) {
-                // Wait for socket to be ready
-                await delay(2000); 
+                // Wait for socket to stabilize
+                await delay(3000); 
                 num = num.replace(/[^0-9]/g, '');
                 
                 // Request pairing code
@@ -65,13 +68,15 @@ router.get('/', async (req, res) => {
                         let md = "BILAL-MD~" + string_session;
                         
                         await sock.sendMessage(sock.user.id, { text: md });
-                        await sock.sendMessage(sock.user.id, { text: "*BILAL-MD CONNECTED SUCCESSFULLY* ✅" });
+                        await sock.sendMessage(sock.user.id, { 
+                            text: "*BILAL-MD CONNECTED SUCCESSFULLY* ✅\n\n*Session ID:* `" + md + "`" 
+                        });
 
                     } catch (e) {
                         console.log("Upload error", e);
                     }
                     
-                    await delay(1000);
+                    await delay(2000);
                     await sock.ws.close();
                     await removeFile('./temp/' + id);
                     process.exit(0);
@@ -79,11 +84,13 @@ router.get('/', async (req, res) => {
                 } else if (connection === "close") {
                     let reason = lastDisconnect?.error?.output?.statusCode;
                     if (reason !== 401) {
-                        GIFTED_MD_PAIR_CODE();
+                        // Re-initialize if connection lost but not logged out
+                        setTimeout(() => GIFTED_MD_PAIR_CODE(), 3000);
                     }
                 }
             });
         } catch (err) {
+            console.error("Pairing Error:", err);
             await removeFile('./temp/' + id);
             if (!res.headersSent) {
                 await res.send({ code: "Service Unavailable" });
