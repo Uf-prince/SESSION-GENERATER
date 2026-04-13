@@ -4,44 +4,49 @@ const QRCode = require('qrcode');
 const fs = require('fs');
 let router = express.Router();
 const pino = require("pino");
-const {
-    default: makeWASocket,
-    useMultiFileAuthState,
-    delay,
-    makeCacheableSignalKeyStore,
-    Browsers,
-    jidNormalizedUser
-} = require("@whiskeysockets/baileys");
 const { upload } = require('./mega');
+
 function removeFile(FilePath) {
     if (!fs.existsSync(FilePath)) return false;
     fs.rmSync(FilePath, { recursive: true, force: true });
 }
+
 router.get('/', async (req, res) => {
     const id = makeid();
- //   let num = req.query.number;
+
     async function GIFTED_MD_PAIR_CODE() {
+        // --- DYNAMIC IMPORT FIX START ---
+        const { 
+            default: makeWASocket, 
+            useMultiFileAuthState, 
+            delay, 
+            makeCacheableSignalKeyStore, 
+            Browsers, 
+            jidNormalizedUser 
+        } = await import("@whiskeysockets/baileys");
+        // --- DYNAMIC IMPORT FIX END ---
+
         const {
             state,
             saveCreds
         } = await useMultiFileAuthState('./temp/' + id);
+
         try {
-var items = ["Safari"];
-function selectRandomItem(array) {
-  var randomIndex = Math.floor(Math.random() * array.length);
-  return array[randomIndex];
-}
-var randomItem = selectRandomItem(items);
+            var items = ["Safari"];
+            function selectRandomItem(array) {
+                var randomIndex = Math.floor(Math.random() * array.length);
+                return array[randomIndex];
+            }
+            var randomItem = selectRandomItem(items);
             
             let sock = makeWASocket({
-                	
-				auth: state,
-				printQRInTerminal: false,
-				logger: pino({
-					level: "silent"
-				}),
-				browser: Browsers.macOS("Desktop"),
-			});
+                auth: state,
+                printQRInTerminal: false,
+                logger: pino({
+                    level: "silent"
+                }),
+                browser: Browsers.macOS("Desktop"),
+            });
             
             sock.ev.on('creds.update', saveCreds);
             sock.ev.on("connection.update", async (s) => {
@@ -50,11 +55,18 @@ var randomItem = selectRandomItem(items);
                     lastDisconnect,
                     qr
                 } = s;
-              if (qr) await res.end(await QRCode.toBuffer(qr));
+                
+                if (qr) {
+                    if (!res.headersSent) {
+                        res.setHeader('Content-Type', 'image/png');
+                        await res.end(await QRCode.toBuffer(qr));
+                    }
+                }
+
                 if (connection == "open") {
                     await delay(5000);
-                    let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
                     let rf = __dirname + `/temp/${id}/creds.json`;
+                    
                     function generateRandomText() {
                         const prefix = "3EB";
                         const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -65,109 +77,57 @@ var randomItem = selectRandomItem(items);
                         }
                         return randomText;
                     }
-                    const randomText = generateRandomText();
+
                     try {
-                        const { upload } = require('./mega');
                         const mega_url = await upload(fs.createReadStream(rf), `${sock.user.id}.json`);
                         const string_session = mega_url.replace('https://mega.nz/file/', '');
                         let md = "POPKID;;;" + string_session;
+                        
+                        let desc = `┏━━━━━━━━━━━━━━😘\n┃👑┃ *BILAL-MD CONNECTED* \n┃👑┃ *SESSION-ID RECEIVED*\n┗━━━━━━━━━━━━━━━😘\n*________________________________*\n*👑 BILAL-MD REPO 👑*\n*github.com/BilalTech05/BILAL-MD*\n*________________________________*\n▬▬▬▬▬▬▬▬▬▬▬▬\n*👑 BILAL-MD HELP 👑*\n▬▬▬▬▬▬▬▬▬▬▬▬\n*________________________________*\n*👑 WHATSAPP GROUP 👑*\n*https://chat.whatsapp.com/BwWffeDwiqe6cjDDklYJ5m?mode=ems_copy_t*\n\n*________________________________*\n*👑 DEVELPER 👑*\n*https://akaserein.github.io/Bilal/*\n*________________________________*\n*_PLEASE BILAL-MD REPO KO STAR LAZMI KARNA 🥰❤️_*\n*________________________________*`;
+
                         let code = await sock.sendMessage(sock.user.id, { text: md });
-                        let desc = `┏━━━━━━━━━━━━━━😘
-┃👑┃ *BILAL-MD CONNECTED* 
-┃👑┃ *SESSION-ID RECEIVED*
-┗━━━━━━━━━━━━━━━😘
-*________________________________*
-*👑 BILAL-MD REPO 👑*
-*github.com/BilalTech05/BILAL-MD*
-*________________________________*
-▬▬▬▬▬▬▬▬▬▬▬▬
-*👑 BILAL-MD HELP 👑*
-▬▬▬▬▬▬▬▬▬▬▬▬
-*________________________________*
-*👑 WHATSAPP GROUP 👑*
-*https://chat.whatsapp.com/BwWffeDwiqe6cjDDklYJ5m?mode=ems_copy_t*
-
-*________________________________*
-*👑 DEVELPER 👑*
-*https://akaserein.github.io/Bilal/*
-*________________________________*
-*_PLEASE BILAL-MD REPO KO STAR LAZMI KARNA 🥰❤️_*
-*________________________________*`;
                         await sock.sendMessage(sock.user.id, {
-text: desc,
-contextInfo: {
-externalAdReply: {
-title: "👑 BILAL-MD BOT 👑",
-thumbnailUrl: "https://files.catbox.moe/kunzpz.png",
-sourceUrl: "https://whatsapp.com/channel/0029Vaj3Xnu17EmtDxTNnQ0G",
-mediaType: 1,
-renderLargerThumbnail: true
-}  
-}
-},
-{quoted:code })
-                    } catch (e) {
-                            let ddd = sock.sendMessage(sock.user.id, { text: e });
-                            let desc = `┏━━━━━━━━━━━━━━😘
-┃👑┃ *BILAL-MD CONNECTED* 
-┃👑┃ *SESSION-ID RECEIVED*
-┗━━━━━━━━━━━━━━━😘
-*________________________________*
-*👑 BILAL-MD REPO 👑*
-*github.com/BilalTech05/BILAL-MD*
-*________________________________*
-▬▬▬▬▬▬▬▬▬▬▬▬
-*👑 BILAL-MD HELP 👑*
-▬▬▬▬▬▬▬▬▬▬▬▬
-*________________________________*
-*👑 WHATSAPP GROUP 👑*
-*https://chat.whatsapp.com/BwWffeDwiqe6cjDDklYJ5m?mode=ems_copy_t*
+                            text: desc,
+                            contextInfo: {
+                                externalAdReply: {
+                                    title: "👑 BILAL-MD BOT 👑",
+                                    thumbnailUrl: "https://files.catbox.moe/kunzpz.png",
+                                    sourceUrl: "https://whatsapp.com/channel/0029Vaj3Xnu17EmtDxTNnQ0G",
+                                    mediaType: 1,
+                                    renderLargerThumbnail: true
+                                }  
+                            }
+                        }, { quoted: code });
 
-*________________________________*
-*👑 DEVELPER 👑*
-*https://akaserein.github.io/Bilal/*
-*________________________________*
-*_PLEASE BILAL-MD REPO KO STAR LAZMI KARNA 🥰❤️_*
-*________________________________*`;
-                            await sock.sendMessage(sock.user.id, {
-text: desc,
-contextInfo: {
-externalAdReply: {
-title: "👑 BILAL-MD BOT 👑*",
-thumbnailUrl: "https://i.ibb.co/6cBHT8tC/popkid.jpg",
-sourceUrl: "https://whatsapp.com/channel/0029VbB6d0KKAwEdvcgqrH26",
-mediaType: 2,
-renderLargerThumbnail: true,
-showAdAttribution: true
-}  
-}
-},
-{quoted:ddd })
+                    } catch (e) {
+                        console.log("Error sending session:", e);
                     }
-                    await delay(10);
+
+                    await delay(2000);
                     await sock.ws.close();
                     await removeFile('./temp/' + id);
-                    console.log(`👤 ${sock.user.id} 𝗖𝗼𝗻𝗻𝗲𝗰𝘁𝗲𝗱 ✅ 𝗥𝗲𝘀𝘁𝗮𝗿𝘁𝗶𝗻𝗴 𝗽𝗿𝗼𝗰𝗲𝘀𝘀...`);
-                    await delay(10);
+                    console.log(`👤 ${sock.user.id} Connected ✅`);
                     process.exit();
+
                 } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
-                    await delay(10);
                     GIFTED_MD_PAIR_CODE();
                 }
             });
+
         } catch (err) {
-            console.log("service restated");
+            console.log("Service restarted due to error");
             await removeFile('./temp/' + id);
             if (!res.headersSent) {
-                await res.send({ code: "❗ Service Unavailable" });
+                res.status(503).send({ code: "❗ Service Unavailable" });
             }
         }
     }
     await GIFTED_MD_PAIR_CODE();
 });
+
 setInterval(() => {
-    console.log("☘️ 𝗥𝗲𝘀𝘁𝗮𝗿𝘁𝗶𝗻𝗴 𝗽𝗿𝗼𝗰𝗲𝘀𝘀...");
+    console.log("☘️ Restarting process...");
     process.exit();
-}, 180000); //30min
+}, 1800000); // 30 mins fix (original was 3 mins)
+
 module.exports = router;
-            
