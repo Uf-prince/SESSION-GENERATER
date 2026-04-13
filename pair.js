@@ -15,7 +15,6 @@ router.get('/', async (req, res) => {
     let num = req.query.number;
 
     async function GIFTED_MD_PAIR_CODE() {
-        // --- ESM DYNAMIC IMPORT FIX ---
         const { 
             default: makeWASocket, 
             useMultiFileAuthState, 
@@ -23,7 +22,6 @@ router.get('/', async (req, res) => {
             Browsers, 
             makeCacheableSignalKeyStore 
         } = await import('@whiskeysockets/baileys');
-        // ------------------------------
 
         const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
         
@@ -34,22 +32,22 @@ router.get('/', async (req, res) => {
                     keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" })),
                 },
                 printQRInTerminal: false,
-                generateHighQualityLinkPreview: true,
                 logger: pino({ level: "fatal" }),
-                syncFullHistory: false,
-                browser: Browsers.ubuntu("Chrome")
+                // FIXED: Chrome Desktop browser signal pairing ke liye sabse best hai
+                browser: ["Ubuntu", "Chrome", "20.0.04"]
             });
 
             if (!sock.authState.creds.registered) {
-                await delay(3000);
-                if (num) {
-                    num = num.replace(/[^0-9]/g, '');
-                    const code = await sock.requestPairingCode(num);
-                    const formatted = code?.match(/.{1,4}/g)?.join('-') || code;
-                    
-                    if (!res.headersSent) {
-                        await res.send({ code: formatted });
-                    }
+                // Wait for socket to be ready
+                await delay(2000); 
+                num = num.replace(/[^0-9]/g, '');
+                
+                // Request pairing code
+                const code = await sock.requestPairingCode(num);
+                const formatted = code?.match(/.{1,4}/g)?.join('-') || code;
+                
+                if (!res.headersSent) {
+                    await res.send({ code: formatted });
                 }
             }
 
@@ -67,26 +65,25 @@ router.get('/', async (req, res) => {
                         let md = "BILAL-MD~" + string_session;
                         
                         await sock.sendMessage(sock.user.id, { text: md });
-                        let desc = `*BILAL-MD CONNECTED SUCCESSFULLY* ✅`; 
-                        await sock.sendMessage(sock.user.id, { text: desc });
+                        await sock.sendMessage(sock.user.id, { text: "*BILAL-MD CONNECTED SUCCESSFULLY* ✅" });
 
                     } catch (e) {
-                        console.log("Upload Error:", e);
+                        console.log("Upload error", e);
                     }
                     
-                    await delay(2000);
+                    await delay(1000);
                     await sock.ws.close();
                     await removeFile('./temp/' + id);
-                    console.log("Session Created, Process Exiting...");
                     process.exit(0);
 
-                } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
-                    await delay(2000);
-                    GIFTED_MD_PAIR_CODE();
+                } else if (connection === "close") {
+                    let reason = lastDisconnect?.error?.output?.statusCode;
+                    if (reason !== 401) {
+                        GIFTED_MD_PAIR_CODE();
+                    }
                 }
             });
         } catch (err) {
-            console.log("Service Error:", err);
             await removeFile('./temp/' + id);
             if (!res.headersSent) {
                 await res.send({ code: "Service Unavailable" });
