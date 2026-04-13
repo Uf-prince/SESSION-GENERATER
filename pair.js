@@ -3,7 +3,6 @@ const express = require('express');
 const fs = require('fs');
 let router = express.Router();
 const pino = require("pino");
-const { default: makeWASocket, useMultiFileAuthState, delay, Browsers, makeCacheableSignalKeyStore } = require('@whiskeysockets/baileys');
 const { upload } = require('./mega');
 
 function removeFile(FilePath) {
@@ -16,7 +15,18 @@ router.get('/', async (req, res) => {
     let num = req.query.number;
 
     async function GIFTED_MD_PAIR_CODE() {
+        // --- ESM DYNAMIC IMPORT FIX ---
+        const { 
+            default: makeWASocket, 
+            useMultiFileAuthState, 
+            delay, 
+            Browsers, 
+            makeCacheableSignalKeyStore 
+        } = await import('@whiskeysockets/baileys');
+        // ------------------------------
+
         const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
+        
         try {
             let sock = makeWASocket({
                 auth: {
@@ -27,22 +37,19 @@ router.get('/', async (req, res) => {
                 generateHighQualityLinkPreview: true,
                 logger: pino({ level: "fatal" }),
                 syncFullHistory: false,
-                // FIXED: Chrome browser set kiya hai takay connection fail na ho
                 browser: Browsers.ubuntu("Chrome")
             });
 
             if (!sock.authState.creds.registered) {
-                // FIXED: Thora delay zaroori hai pairing code request se pehle
                 await delay(3000);
-                num = num.replace(/[^0-9]/g, '');
-
-                // FIXED: Custom code (BILALMDX) ki wajah se connection issue aata hai, 
-                // isliye ab direct default pairing use hogi jo 100% connect hoti hai.
-                const code = await sock.requestPairingCode(num);
-                const formatted = code?.match(/.{1,4}/g)?.join('-') || code;
-                
-                if (!res.headersSent) {
-                    await res.send({ code: formatted });
+                if (num) {
+                    num = num.replace(/[^0-9]/g, '');
+                    const code = await sock.requestPairingCode(num);
+                    const formatted = code?.match(/.{1,4}/g)?.join('-') || code;
+                    
+                    if (!res.headersSent) {
+                        await res.send({ code: formatted });
+                    }
                 }
             }
 
@@ -52,11 +59,9 @@ router.get('/', async (req, res) => {
 
                 if (connection == "open") {
                     await delay(5000);
-                    let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
                     let rf = __dirname + `/temp/${id}/creds.json`;
 
                     try {
-                        const { upload } = require('./mega');
                         const mega_url = await upload(fs.createReadStream(rf), `${sock.user.id}.json`);
                         const string_session = mega_url.replace('https://mega.nz/file/', '');
                         let md = "BILAL-MD~" + string_session;
@@ -66,14 +71,17 @@ router.get('/', async (req, res) => {
                         await sock.sendMessage(sock.user.id, { text: desc });
 
                     } catch (e) {
-                        console.log(e);
+                        console.log("Upload Error:", e);
                     }
-                    await delay(100);
+                    
+                    await delay(2000);
                     await sock.ws.close();
                     await removeFile('./temp/' + id);
-                    process.exit();
+                    console.log("Session Created, Process Exiting...");
+                    process.exit(0);
+
                 } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
-                    await delay(100);
+                    await delay(2000);
                     GIFTED_MD_PAIR_CODE();
                 }
             });
