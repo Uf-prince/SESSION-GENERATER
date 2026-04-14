@@ -11,7 +11,7 @@
     "npm": "10.x"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "github:danzxantisepele/Danzx-bail",
+    "@whiskeysockets/baileys": "npm:gifted-baileys",
     "@adiwajshing/keyed-db": "^0.2.4",
     "qrcode": "^1.5.3",
     "awesome-phonenumber": "^2.64.0",
@@ -22,6 +22,6 @@
     "path": "^0.12.7",
     "megajs": "1.1.7",
     "async-mutex": "0.4.1",
-    "jimp": "^1.6.0"
+    "jimp": "*"
   }
 }
